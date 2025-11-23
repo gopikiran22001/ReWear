@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "ReWear is an innovative sustainable fashion exchange platform designed to combat fast fashion waste and promote circular economy principles in the clothing industry. The platform enables users to exchange pre-owned clothing items while actively tracking and visualizing their positive environmental impact.",
   "scripts": {
-    "install-all": "node install-all.js",
-    "start": "node start-all.js",
-    "dev": "node start-all.js",
+    "install-all": "npm install && cd Server && npm install && pip install -r requirements.txt && cd ../Client && npm install",
+    "start": "concurrently \"npm run backend\" \"npm run ml\" \"npm run frontend\"",
     "backend": "cd Server && npm start",
     "ml": "cd Server && npm run ml",
     "frontend": "cd Client && npm start"
