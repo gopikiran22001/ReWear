@@ -6,6 +6,7 @@ const Authentication = require('../MiddleWare/Authentication');
 const attachOwnerFromJWT = require('../MiddleWare/Attach_Owner');
 const Product = require('../Models/Product_Model');
 const Notification = require('../Models/Notification_Model');
+const Transaction = require('../Models/Transaction_Model');
 
 router.use(cookieParser());
 router.use(express.json());

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { API_ENDPOINTS } from "@/config/api";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,7 +82,7 @@ export default function Profile() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://localhost:3000/reware/user", {
+      const response = await fetch(API_ENDPOINTS.USER.PROFILE, {
         method: "PUT",
         credentials: "include",
         body: formData,
@@ -119,7 +120,7 @@ export default function Profile() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/reware/user", {
+      const response = await fetch(API_ENDPOINTS.USER.PROFILE, {
         method: "PUT",
         credentials: "include",
         headers: {

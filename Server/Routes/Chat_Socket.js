@@ -13,14 +13,26 @@ function initializeChatServer(server) {
 
   wss.on('connection', async (ws, req) => {
     const origin = req.headers.origin;
-    if (origin !== process.env.ORIGIN) return ws.close();
+    const allowedOrigins = [process.env.ORIGIN, 'http://localhost:5173', 'http://localhost:5500'];
+    if (origin && !allowedOrigins.includes(origin)) {
+      console.log(`[WebSocket] Rejected connection from origin: ${origin}`);
+      return ws.close();
+    }
 
     const parsedUrl = url.parse(req.url, true);
     const userIdQuery = parsedUrl.query.userId;
 
     try {
+      if (!userIdQuery) {
+        console.log('[WebSocket] No userId provided');
+        return ws.close();
+      }
+
       const user = await User.findById(userIdQuery).select('_id');
-      if (!user) return ws.close();
+      if (!user) {
+        console.log(`[WebSocket] User not found: ${userIdQuery}`);
+        return ws.close();
+      }
 
       const userId = user._id.toString();
       clients.set(userId, ws);
@@ -221,11 +233,15 @@ function initializeChatServer(server) {
           }
 
         } catch (err) {
-          console.error('[WebSocket Error]', err);
-          ws.send(JSON.stringify({
-            type: 'ERROR',
-            payload: 'Something went wrong'
-          }));
+          console.error('[WebSocket Error]', err.message);
+          try {
+            ws.send(JSON.stringify({
+              type: 'ERROR',
+              payload: 'Something went wrong'
+            }));
+          } catch (sendErr) {
+            console.error('[WebSocket Send Error]', sendErr.message);
+          }
         }
       });
 
@@ -235,7 +251,7 @@ function initializeChatServer(server) {
       });
 
     } catch (err) {
-      console.error('[WebSocket connection error]', err);
+      console.error('[WebSocket connection error]', err.message);
       ws.close();
     }
   });

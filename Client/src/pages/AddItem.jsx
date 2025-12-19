@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from "@/config/api";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,7 +124,7 @@ export default function AddItem() {
         formDataToSend.append("images", image);
       });
 
-      const response = await fetch("http://localhost:3000/reware/product", {
+      const response = await fetch(API_ENDPOINTS.PRODUCT.BASE, {
         method: "POST",
         credentials: "include",
         body: formDataToSend,

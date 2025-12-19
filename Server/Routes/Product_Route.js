@@ -145,7 +145,7 @@ router.get(
   attachOwnerFromJWT,
   async (req, res) => {
     try {
-      const myProducts = await Product.find({ owner: req.owner.id }).sort({ createdAt: -1 });
+      const myProducts = await Product.find({ 'owner._id': req.owner._id }).sort({ createdAt: -1 });
       res.json({ products: myProducts });
     } catch (error) {
       console.error('Error fetching my products:', error);
@@ -160,17 +160,16 @@ router.get(
       const { productId } = req.query;
 
       if (!productId) {
-        return res.status(400).json({ error: 'Search query is required' });
+        return res.status(400).json({ error: 'Product ID is required' });
       }
 
-      // Case-insensitive search on 'title' and 'description' fields
-      const product = await Product.findById(productId).select('-customer -createdAt -updatedAt').sort({ createdAt: -1 });
+      const product = await Product.findById(productId).select('-customer -createdAt -updatedAt');
       if (!product) {
         return res.status(404).json({ error: 'Product not found' });
       }
-      res.status(200).json({ products });
+      res.status(200).json({ products: product });
     } catch (error) {
-      console.error('Search error:', error.message);
+      console.error('Fetch product error:', error.message);
       res.status(500).json({ error: 'Internal server error' });
     }
   });

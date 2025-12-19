@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from "@/config/api";
 
 const AuthContext = createContext({});
 
@@ -35,7 +36,7 @@ export function AuthProvider({ children }) {
   // Fetch full user details
   const fetchUserDetails = async () => {
     try {
-      const response = await fetch("http://localhost:3000/reware/user", {
+      const response = await fetch(API_ENDPOINTS.USER.PROFILE, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -59,7 +60,7 @@ export function AuthProvider({ children }) {
   const signIn = async (email, password) => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/reware/user/login", {
+      const response = await fetch(API_ENDPOINTS.USER.LOGIN, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -98,7 +99,7 @@ export function AuthProvider({ children }) {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://localhost:3000/reware/user/register",
+        API_ENDPOINTS.USER.REGISTER,
         {
           method: "POST",
           credentials: "include",
@@ -132,7 +133,7 @@ export function AuthProvider({ children }) {
   const signOut = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/reware/user/logout", {
+      const response = await fetch(API_ENDPOINTS.USER.LOGOUT, {
         method: "GET",
         credentials: "include",
       });

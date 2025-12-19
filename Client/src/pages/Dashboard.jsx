@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { API_ENDPOINTS } from "@/config/api";
 import { useToast } from "@/hooks/use-toast";
 import {
   Leaf,
@@ -11,9 +12,12 @@ import {
   LogOut,
   Droplets,
   Plus,
+  MessageSquare,
+  FileText,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +28,7 @@ const DEFAULT_PROFILE_IMAGE =
 // Add fetchMyProducts function
 async function fetchMyProducts() {
   const response = await fetch(
-    "http://localhost:3000/reware/product/my-products",
+    API_ENDPOINTS.PRODUCT.MY_PRODUCTS,
     {
       credentials: "include", // send cookies for JWT auth
     }
@@ -39,6 +43,7 @@ async function fetchMyProducts() {
 export default function Dashboard() {
   const { user, signOut, fetchUserDetails } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [productsError, setProductsError] = useState(null);
@@ -135,24 +140,33 @@ export default function Dashboard() {
               <span className="text-2xl font-bold text-eco-900">ReWear</span>
             </div>
             <div className="flex items-center space-x-4">
-              {/* <Link
-                to="/add-item"
-                className="flex items-center space-x-2 text-gray-600 hover:text-eco-600"
-              >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center"
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Add New Item
+              <Link to="/requests">
+                <Button variant="ghost" size="icon" title="Requests">
+                  <FileText className="h-5 w-5 text-gray-600" />
                 </Button>
-              </Link> */}
-              <Link
-                to="/profile"
-                className="flex items-center space-x-2 text-gray-600 hover:text-eco-600"
-              >
-                <div className="flex items-center space-x-2">
+              </Link>
+              <Link to="/transactions">
+                <Button variant="ghost" size="icon" title="Transactions">
+                  <CreditCard className="h-5 w-5 text-gray-600" />
+                </Button>
+              </Link>
+              <Link to="/chat">
+                <Button variant="ghost" size="icon" title="Chat">
+                  <MessageSquare className="h-5 w-5 text-gray-600" />
+                </Button>
+              </Link>
+              <Link to="/notifications">
+                <Button variant="ghost" size="icon" className="relative">
+                  <Bell className="h-5 w-5 text-gray-600" />
+                  {user?.notifications?.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                      {user.notifications.length}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+              <Link to="/profile">
+                <div className="flex items-center space-x-2 text-gray-600 hover:text-eco-600">
                   <div className="w-8 h-8 rounded-full overflow-hidden">
                     <img
                       src={user?.profilePhoto || DEFAULT_PROFILE_IMAGE}
@@ -160,17 +174,8 @@ export default function Dashboard() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <span>Your Profile</span>
                 </div>
               </Link>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5 text-gray-600" />
-                {user?.notifications?.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                    {user.notifications.length}
-                  </span>
-                )}
-              </Button>
               <Button
                 variant="ghost"
                 size="icon"
@@ -310,6 +315,7 @@ export default function Dashboard() {
               {products.map((product) => (
                 <Card
                   key={product._id}
+                  onClick={() => navigate(`/product/${product._id}`)}
                   className="bg-white border border-eco-200 rounded-lg shadow p-1 group hover:shadow-lg transition-shadow cursor-pointer flex flex-col justify-between h-full min-h-[420px] max-w-[320px] mx-auto"
                 >
                   <CardContent className="p-0 flex flex-col h-full">
@@ -372,7 +378,13 @@ export default function Dashboard() {
                     >
                       ₹{product.cost}
                     </Button>
-                    <Button className="bg-green-600 hover:bg-green-700 text-white w-full text-base font-semibold py-2 mt-auto">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/product/${product._id}`);
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white w-full text-base font-semibold py-2 mt-auto"
+                    >
                       View Details
                     </Button>
                   </CardContent>

@@ -16,12 +16,18 @@ import {
 import { Link, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Footer } from "@/components/footer";
 import { cn } from "@/lib/utils";
+import { API_ENDPOINTS } from "@/config/api";
 import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { Toaster } from "sonner";
 import Profile from "@/pages/Profile";
 import AddItem from "@/pages/AddItem";
+import Requests from "@/pages/Requests";
+import Transactions from "@/pages/Transactions";
+import Notifications from "@/pages/Notifications";
+import Chat from "@/pages/Chat";
+import ProductDetail from "@/pages/ProductDetail";
 import React, { useEffect, useState } from "react";
 
 // Protected Route Component
@@ -90,6 +96,7 @@ function Navigation() {
 }
 
 function HomePage({ featuredItems }) {
+  const navigate = useNavigate();
   return (
     <>
       {/* Hero Section */}
@@ -157,6 +164,7 @@ function HomePage({ featuredItems }) {
             {featuredItems.slice(0, 4).map((item) => (
               <Card
                 key={item._id}
+                onClick={() => navigate(`/product/${item._id}`)}
                 className="bg-white border border-eco-200 rounded-lg shadow p-1 group hover:shadow-lg transition-shadow cursor-pointer flex flex-col justify-between"
               >
                 <CardContent className="p-0 flex flex-col h-full">
@@ -219,8 +227,14 @@ function HomePage({ featuredItems }) {
                       </span>
                     </div>
                   </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white w-full text-base font-semibold py-2 mt-auto">
-                    Swap Request
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/${item._id}`);
+                    }}
+                    className="bg-green-600 hover:bg-green-700 text-white w-full text-base font-semibold py-2 mt-auto"
+                  >
+                    View Details
                   </Button>
                 </CardContent>
               </Card>
@@ -330,7 +344,7 @@ export default function App() {
   useEffect(() => {
     async function fetchFeaturedItems() {
       try {
-        const response = await fetch("http://localhost:3000/reware/product", {
+        const response = await fetch(API_ENDPOINTS.PRODUCT.BASE, {
           credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to fetch products");
@@ -368,6 +382,46 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <AddItem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/requests"
+            element={
+              <ProtectedRoute>
+                <Requests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute>
+                <Transactions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/product/:productId"
+            element={
+              <ProtectedRoute>
+                <ProductDetail />
               </ProtectedRoute>
             }
           />
