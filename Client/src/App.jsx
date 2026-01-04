@@ -13,7 +13,7 @@ import {
   Plus,
   Settings,
 } from "lucide-react";
-import { Link, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Link, Routes, Route, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { Footer } from "@/components/footer";
 import { cn } from "@/lib/utils";
 import { API_ENDPOINTS } from "@/config/api";

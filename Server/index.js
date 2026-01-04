@@ -25,17 +25,22 @@ app.use(cors({
 }));
 
 // Routes
-app.use('/reware/product', productRoutes);
-app.use('/reware/user', userRoutes);
-app.use('/reware/request', requestRoutes);
-app.use('/reware/transaction', transactionRoutes);
-app.use('/reware/notification', notificationsRoutes);
+app.use('/rewear/product', productRoutes);
+app.use('/rewear/user', userRoutes);
+app.use('/rewear/request', requestRoutes);
+app.use('/rewear/transaction', transactionRoutes);
+app.use('/rewear/notification', notificationsRoutes);
 
 // Single HTTP server that also supports WebSocket
 const server = http.createServer(app);
 
 // Attach socket to same server
 initializeChatServer(server);
+
+app.get('/health', (req, res) => {
+  console.log('Health API...');
+  res.send('Server Running!...');
+})
 
 // Start one server only
 const PORT = 3000;
